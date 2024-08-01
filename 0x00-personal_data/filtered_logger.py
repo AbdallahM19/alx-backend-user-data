@@ -8,14 +8,17 @@ from typing import List
 
 
 PII_FIELDS = ("name", "email", "phone", "ssn", "password")
-
+patterns = {
+    'extract': lambda x, y: r'(?P<field>{})=[^{}]*'.format('|'.join(x), y),
+    'replace': lambda x: r'\g<field>={}'.format(x),
+}
 
 def filter_datum(
-        fields: List[str], redaction: str, message: str, separator: str
+        fields: List[str], redaction: str, message: str, separator: str,
         ) -> str:
     """filter datum function"""
-    pattern = r'({})=([^{}]*)'.format('|'.join(fields), separator)
-    return re.sub(pattern, lambda m: f'{m.group(1)}={redaction}', message)
+    extract, replace = (patterns["extract"], patterns["replace"])
+    return re.sub(extract(fields, separator), replace(redaction), message)
 
 
 def get_logger() -> logging.Logger:
