@@ -17,6 +17,8 @@ def filter_datum(
         ) -> str:
     """filter datum function"""
     for field in fields:
-        regex_ing = patterns['extract'](field, message, separator)
-        message = sub(regex_ing, "{}={}".format(field, redaction), message)
+        message = sub(
+            patterns['extract'](field, message, separator),
+            "{}={}".format(field, redaction), message
+        )
     return message
