@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Personal Data"""
 
+from typing import List
 from re import sub, search
 
 
@@ -11,11 +12,11 @@ patterns = {
 }
 
 
-def filter_datum(fields, redaction, message, separator):
+def filter_datum(
+        fields: List[str], redaction: str, message: str, separator: str
+        ) -> str:
     """filter datum function"""
     for field in fields:
         regex_ing = patterns['extract'](field, message, separator)
-        message = sub(
-            regex_ing, "{}={}".format(field, redaction), message
-        )
+        message = sub(regex_ing, "{}={}".format(field, redaction), message)
     return message
