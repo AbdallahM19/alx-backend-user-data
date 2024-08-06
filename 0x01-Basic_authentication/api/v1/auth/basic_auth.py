@@ -47,12 +47,8 @@ class BasicAuth(Auth):
            or not isinstance(decoded_base64_authorization_header, str)\
            or ':' not in decoded_base64_authorization_header:
             return None, None
-        credentials = decoded_base64_authorization_header.split(
-            ':', 1
-        )[1].split(':')
-        email = credentials[0].strip()
-        password = ''.join(credentials[1:]).strip()
-        return email, password
+        email, password = decoded_base64_authorization_header.split(':', 1)
+        return email.strip(), password.strip()
 
     def user_object_from_credentials(
         self, user_email: str, user_pwd: str
