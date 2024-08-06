@@ -47,7 +47,9 @@ class BasicAuth(Auth):
            or not isinstance(decoded_base64_authorization_header, str)\
            or ':' not in decoded_base64_authorization_header:
             return None, None
-        credentials = decoded_base64_authorization_header.split(':', 1)[1].split(':')
+        credentials = decoded_base64_authorization_header.split(
+            ':', 1
+        )[1].split(':')
         email = credentials[0].strip()
         password = ''.join(credentials[1:]).strip()
         return email, password
@@ -75,7 +77,11 @@ class BasicAuth(Auth):
         if request is None:
             return None
         auth_header = self.authorization_header(request)
-        base64_credentials = self.extract_base64_authorization_header(auth_header)
-        decoded_credentials = self.decode_base64_authorization_header(base64_credentials)
+        base64_credentials = self.extract_base64_authorization_header(
+            auth_header
+        )
+        decoded_credentials = self.decode_base64_authorization_header(
+            base64_credentials
+        )
         email, password = self.extract_user_credentials(decoded_credentials)
         return self.user_object_from_credentials(email, password)
