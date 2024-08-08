@@ -13,16 +13,16 @@ def login_session() -> Tuple[str, int]:
     """Login session view"""
     email = request.form.get('email')
     if email is None or len(email.strip()) == 0:
-        return jsonify({ "error": "email missing" }), 400
+        return jsonify({"error": "email missing"}), 400
     password = request.form.get('password')
     if password is None or len(password.strip()) == 0:
-        return jsonify({ "error": "password missing" }), 400
+        return jsonify({"error": "password missing"}), 400
     try:
         users = User.search({'email': email})
     except Exception:
-        return jsonify({ "error": "no user found for this email" }), 404
+        return jsonify({"error": "no user found for this email"}), 404
     if len(users) <= 0:
-        return jsonify({ "error": "no user found for this email" }), 404
+        return jsonify({"error": "no user found for this email"}), 404
     if users[0].is_valid_password(password):
         from api.v1.app import auth
         session_id = auth.create_session(getattr(users[0], 'id'))
@@ -31,7 +31,12 @@ def login_session() -> Tuple[str, int]:
         return res
     return jsonify({"error": "wrong password"}), 401
 
-@app_views.route('/auth_session/logout', methods=['DELETE'], strict_slashes=False)
+
+@app_views.route(
+    '/auth_session/logout',
+    methods=['DELETE'],
+    strict_slashes=False
+)
 def logout_session() -> Tuple[str, int]:
     """Logout session view"""
     from api.v1.app import auth
