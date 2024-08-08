@@ -12,16 +12,13 @@ from models.user import User
 
 class BasicAuth(Auth):
     """Basic authentication class"""
-    def __init__(self) -> None:
-        super().__init__()
-
     def extract_base64_authorization_header(
         self, authorization_header: str
     ) -> str:
         """Extracts base64 from the Authorization header"""
         if authorization_header is None\
            or not isinstance(authorization_header, str)\
-           or authorization_header.startswith('Basic ') is False:
+           or not authorization_header.startswith('Basic '):
             return None
         auth_start = authorization_header.split(' ')
         return auth_start[1]
@@ -48,7 +45,7 @@ class BasicAuth(Auth):
            or ':' not in decoded_base64_authorization_header:
             return None, None
         email, password = decoded_base64_authorization_header.split(':', 1)
-        return email, password
+        return email.strip(), password.strip()
 
     def user_object_from_credentials(
         self, user_email: str, user_pwd: str
