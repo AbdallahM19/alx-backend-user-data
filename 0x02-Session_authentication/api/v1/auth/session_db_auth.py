@@ -4,10 +4,11 @@
 from flask import request
 from datetime import datetime, timedelta
 from models.user_session import UserSession
-from api.v1.auth.session_exp_auth import SessionExpAuth
+from .session_exp_auth import SessionExpAuth
 
 
 class SessionDBAuth(SessionExpAuth):
+    """SessionDBAuth Class"""
     def create_session(self, user_id=None) -> str:
         """Create a session and store it in the database"""
         session_id = super().create_session(user_id)
