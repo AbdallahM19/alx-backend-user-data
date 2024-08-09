@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """new authentication class SessionDBAuth"""
 
+from flask import request
 from datetime import datetime, timedelta
 from models.user_session import UserSession
 from api.v1.auth.session_exp_auth import SessionExpAuth

@@ -30,7 +30,7 @@ if AUTH_TYPE == "session_auth":
     auth = SessionAuth()
 if AUTH_TYPE == "session_exp_auth":
     auth = SessionExpAuth()
-elif AUTH_TYPE == "session_db_auth":
+if AUTH_TYPE == "session_db_auth":
     auth = SessionDBAuth()
 
 
