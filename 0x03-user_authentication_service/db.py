@@ -45,16 +45,35 @@ class DB:
 
     def find_user_by(self, **kwargs) -> User:
         """Find a user by a given key-value pair"""
-        session = self._session
-        user = session.query(User).filter_by(**kwargs).first()
-        if user is None:
-            raise NoResultFound
-        return user
+        keys, values = [], []
 
-    def update_user(self, user_id, **kwargs) -> None:
+        for k, v in kwargs.items():
+            if not hasattr(User, k):
+                raise InvalidRequestError()
+            keys.append(getattr(User, k))
+            values.append(v)
+
+        user_found = self._session.query(User).filter(
+            tuple_(*keys).in_([tuple(values)])
+        ).first()
+
+        if user_found is None:
+            raise NoResultFound()
+        return user_found
+
+    def update_user(self, user_id: int, **kwargs) -> None:
         """Update a user"""
         user = self.find_user_by(id=user_id)
+        if user is None:
+            return
+
+        user_update = {}
         for k, v in kwargs.items():
-            if not hasattr(user, k):
+            if not hasattr(User, k):
                 raise ValueError()
-            setattr(user, k, v)
+            user_update[getattr(User, k)] = v
+
+        self._session.query(User).filter(User.id == user_id).update(
+            user_update, synchronize_session=False,
+        )
+        self._session.commit()
