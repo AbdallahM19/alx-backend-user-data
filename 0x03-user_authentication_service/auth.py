@@ -13,6 +13,7 @@ def _hash_password(password: str) -> bytes:
     """Hashes a password for storing."""
     return hashpw(password.encode('utf-8'), gensalt())
 
+
 def _generate_uuid() -> str:
     return str(uuid4())
 
@@ -62,7 +63,7 @@ class Auth:
             return user
         except NoResultFound:
             return None
-        
+
     def destroy_session(self, user_id: int) -> None:
         """Destroys a user's session."""
         if user_id is None:
