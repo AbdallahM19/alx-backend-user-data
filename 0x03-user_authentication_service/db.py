@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """DB module
 """
-from sqlalchemy import create_engine, tuple_
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.exc import NoResultFound
@@ -18,7 +18,7 @@ class DB:
     def __init__(self) -> None:
         """Initialize a new DB instance
         """
-        self._engine = create_engine("sqlite:///a.db", echo=True)
+        self._engine = create_engine("sqlite:///a.db", echo=False)
         Base.metadata.drop_all(self._engine)
         Base.metadata.create_all(self._engine)
         self.__session = None
@@ -45,21 +45,15 @@ class DB:
 
     def find_user_by(self, **kwargs) -> User:
         """Find a user by a given key-value pair"""
-        keys, values = [], []
-
-        for k, v in kwargs.items():
-            if not hasattr(User, k):
-                raise InvalidRequestError()
-            keys.append(getattr(User, k))
-            values.append(v)
-
-        user_found = self._session.query(User).filter(
-            tuple_(*keys).in_([tuple(values)])
-        ).first()
-
-        if user_found is None:
-            raise NoResultFound()
-        return user_found
+        try:
+            user_found = self._session.query(User).filter_by(
+                **kwargs
+            ).first()
+            if user_found is None:
+                raise NoResultFound()
+            return user_found
+        except InvalidRequestError:
+            raise
 
     def update_user(self, user_id: int, **kwargs) -> None:
         """Update a user"""
@@ -67,13 +61,9 @@ class DB:
         if user is None:
             return
 
-        user_update = {}
         for k, v in kwargs.items():
-            if not hasattr(User, k):
+            if not hasattr(user, k):
                 raise ValueError()
-            user_update[getattr(User, k)] = v
+            setattr(user, k, v)
 
-        self._session.query(User).filter(User.id == user_id).update(
-            user_update, synchronize_session=False,
-        )
         self._session.commit()
