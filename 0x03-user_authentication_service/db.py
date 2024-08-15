@@ -2,10 +2,11 @@
 """DB module
 """
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.exc import InvalidRequestError
+from sqlalchemy.ext.declarative import declarative_base
 
 from user import Base, User
 
@@ -45,7 +46,6 @@ class DB:
     def find_user_by(self, **kwargs) -> User:
         """Find a user by a given key-value pair"""
         session = self._session
-
         user = session.query(User).filter_by(**kwargs).first()
         if user is None:
             raise NoResultFound
