@@ -82,6 +82,9 @@ class Auth:
 
     def update_password(self, reset_token: str, password: str) -> None:
         """Updates a user's password using a reset token."""
+        if reset_token is None or password is None:
+            return None
+
         user = None
         try:
             user = self._db.find_user_by(reset_token=reset_token)
