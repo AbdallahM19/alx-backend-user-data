@@ -45,6 +45,7 @@ def profile_unlogged() -> None:
     response = requests.get("{}/profile".format(BASE_URL))
     assert response.status_code == 403
 
+
 def profile_logged(session_id: str) -> None:
     """Display the profile of a logged user."""
     response = requests.get(
